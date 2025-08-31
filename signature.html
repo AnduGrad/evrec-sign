@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="ro">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>EVREC – Generator Semnătură (Outlook-Safe)</title>
+  <title>EVREC – Email Signature Generator</title>
   <style>
     body{font-family:Arial,Helvetica,sans-serif;margin:24px;line-height:1.4;background:#fff}
     .wrap{max-width:960px;margin:0 auto}
@@ -25,7 +25,7 @@
 <body>
   <div class="wrap">
     <h1>EVREC – Email Signature Generator</h1>
-    <p class="desc">Fill in <b>Surname</b>, <b>Name</b>, <b>Job Title</b> <b>Mobile phone</b>. Press <b>Generate</b>. The signature will automatically be generated: Initial from surname + name @evrec.ca.</p>
+    <p class="desc">Fill in <b>Surname</b>, <b>Name</b>, <b>Job Title</b>, and (optional) <b>Mobile phone</b>. Press <b>Generate</b>. The email will be generated automatically: initial from surname + name @evrec.ca.</p>
 
     <div class="grid">
       <div class="card">
@@ -42,7 +42,7 @@
         <input id="phone" type="text" placeholder="Ex: +40 721 000 000">
 
         <div class="hr"></div>
-        <div class="muted">Email generate: <span id="emailPreview" style="font-weight:700">—</span></div>
+        <div class="muted">Email generated: <span id="emailPreview" style="font-weight:700">—</span></div>
 
         <div class="row">
           <button class="primary" id="generateBtn">Generate</button>
@@ -53,7 +53,7 @@
         <div class="muted">Preview</div>
         <div id="preview" class="preview">(it shows after pressing Generate)</div>
         <div class="hr"></div>
-              </div>
+      </div>
     </div>
   </div>
 
@@ -78,12 +78,22 @@
       return `<table cellpadding="0" cellspacing="0" border="0" style="font-family:Arial, Helvetica, sans-serif; font-size:14px; color:#000000; line-height:1.4; max-width:600px;">
         <tr>
           <td valign="top" style="padding:10px 16px 10px 0; white-space:nowrap;">
-            <a href="${ASSETS.website}" target="_blank"><img src="${ASSETS.logo}" alt="EVREC" style="display:block; height:64px; border:0;"></a>
+            <a href="${ASSETS.website}" target="_blank">
+              <img src="${ASSETS.logo}" alt="EVREC" height="64" style="display:block;border:0;">
+            </a>
             <div style="font-size:8px; line-height:8px;">&nbsp;</div>
             <span style="font-size:13px;">Connect with<br>us:</span>
             <table cellpadding="0" cellspacing="0"><tr>
-              <td style="padding-right:8px;"><a href="${ASSETS.fbUrl}" target="_blank"><img src="${ASSETS.fbIcon}" alt="Facebook" style="display:block;width:20px;height:20px;border:0;"></a></td>
-              <td><a href="${ASSETS.liUrl}" target="_blank"><img src="${ASSETS.liIcon}" alt="LinkedIn" style="display:block;width:20px;height:20px;border:0;"></a></td>
+              <td style="padding-right:8px;">
+                <a href="${ASSETS.fbUrl}" target="_blank">
+                  <img src="${ASSETS.fbIcon}" alt="Facebook" width="20" height="20" style="display:block;border:0;">
+                </a>
+              </td>
+              <td>
+                <a href="${ASSETS.liUrl}" target="_blank">
+                  <img src="${ASSETS.liIcon}" alt="LinkedIn" width="20" height="20" style="display:block;border:0;">
+                </a>
+              </td>
             </tr></table>
           </td>
           <td valign="top" style="padding:10px 0;">
@@ -107,24 +117,13 @@
       const jt=document.getElementById("jobTitle").value.trim();
       const ph=document.getElementById("phone").value.trim();
       const em=buildEmail(fn,ln);
-      if(!fn||!ln){alert("Completează prenume și nume");return;}
+      if(!fn||!ln){alert("Please fill surname and name");return;}
       const html=buildSig({fullName:fn+" "+ln,title:jt,phone:ph,email:em});
       document.getElementById("preview").innerHTML=html;
-      document.getElementById("code").textContent=html;
       document.getElementById("emailPreview").textContent=em;
       window._lastHtml=html;
     }
     document.getElementById("generateBtn").onclick=gen;
-    document.getElementById("copyBtn").onclick=function(){
-      if(!window._lastHtml) gen();
-      navigator.clipboard.writeText(window._lastHtml);
-      alert("Cod HTML copiat. În Outlook → Signatures → New → Paste.");
-    }
-    document.getElementById("openBtn").onclick=function(){
-      if(!window._lastHtml) gen();
-      const url="data:text/html;charset=utf-8,"+encodeURIComponent(window._lastHtml);
-      window.open(url,"_blank");
-    }
   </script>
 </body>
 </html>
