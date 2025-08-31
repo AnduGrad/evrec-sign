@@ -24,40 +24,36 @@
 </head>
 <body>
   <div class="wrap">
-    <h1>EVREC – Email Signature Generator (Outlook-Safe)</h1>
-    <p class="desc">Completează <b>Prenume</b>, <b>Nume</b>, <b>Funcție</b> și (opțional) <b>Telefon</b>. Apasă <b>Generate</b>. Email-ul se generează automat: inițială prenume + nume @evrec.ca.</p>
+    <h1>EVREC – Email Signature Generator</h1>
+    <p class="desc">Fill in <b>Surname</b>, <b>Name</b>, <b>Job Title</b> <b>Mobile phone</b>. Press <b>Generate</b>. The signature will automatically be generated: Initial from surname + name @evrec.ca.</p>
 
     <div class="grid">
       <div class="card">
-        <label for="firstName">Prenume</label>
-        <input id="firstName" type="text" placeholder="Ex: Oana">
+        <label for="firstName">Surname</label>
+        <input id="firstName" type="text" placeholder="Ex: Andrei">
 
-        <label for="lastName">Nume</label>
+        <label for="lastName">Name</label>
         <input id="lastName" type="text" placeholder="Ex: Grădinariu">
 
-        <label for="jobTitle">Funcție</label>
-        <input id="jobTitle" type="text" placeholder="Ex: Legal Counsel">
+        <label for="jobTitle">Job Title</label>
+        <input id="jobTitle" type="text" placeholder="Ex: IT Manager">
 
-        <label for="phone">Telefon (opțional)</label>
+        <label for="phone">Mobile phone</label>
         <input id="phone" type="text" placeholder="Ex: +40 721 000 000">
 
         <div class="hr"></div>
-        <div class="muted">Email generat: <span id="emailPreview" style="font-weight:700">—</span></div>
+        <div class="muted">Email generate: <span id="emailPreview" style="font-weight:700">—</span></div>
 
         <div class="row">
           <button class="primary" id="generateBtn">Generate</button>
-          <button id="copyBtn">Copy HTML</button>
-          <button id="openBtn">Open as HTML</button>
         </div>
       </div>
 
       <div class="card">
         <div class="muted">Preview</div>
-        <div id="preview" class="preview">(apare după Generate)</div>
+        <div id="preview" class="preview">(it shows after pressing Generate)</div>
         <div class="hr"></div>
-        <div class="muted">HTML code</div>
-        <div id="code" class="code">&lt;!-- codul apare după Generate --&gt;</div>
-      </div>
+              </div>
     </div>
   </div>
 
@@ -132,3 +128,4 @@
   </script>
 </body>
 </html>
+
