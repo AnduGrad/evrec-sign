@@ -1,61 +1,134 @@
-<table cellpadding="0" cellspacing="0" border="0" style="font-family:Arial, Helvetica, sans-serif; font-size:14px; color:#000000; line-height:1.4; max-width:600px;">
-  <tr>
-    <!-- Coloana stânga (logo + social) -->
-    <td valign="top" style="padding:10px 16px 10px 0; white-space:nowrap;">
-      <!-- Logo -->
-      <a href="https://www.evrec.ca" target="_blank" style="text-decoration:none;">
-        <img src="https://evrec.ca/wp-content/uploads/2025/05/cropped-evrec-logo-colored-wheel-e1746716862677.jpg" alt="EVREC" style="display:block; height:64px; border:0; outline:none; text-decoration:none;">
-      </a>
-      <!-- Spacer -->
-      <div style="font-size:8px; line-height:8px;">&nbsp;</div>
-      <!-- Connect with us -->
-      <span style="font-size:13px; color:#000000;">Connect with<br>us:</span>
-      <div style="font-size:6px; line-height:6px;">&nbsp;</div>
-      <!-- Social icons -->
-      <table cellpadding="0" cellspacing="0" border="0">
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EVREC – Generator Semnătură (Outlook-Safe)</title>
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;margin:24px;line-height:1.4;background:#fff}
+    .wrap{max-width:960px;margin:0 auto}
+    h1{font-size:22px;margin:0 0 12px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+    .card{border:1px solid #ddd;border-radius:10px;padding:16px;background:#fff}
+    label{display:block;font-weight:600;margin:8px 0 4px}
+    input[type="text"]{width:100%;padding:10px;border:1px solid #bbb;border-radius:8px;font-size:14px}
+    .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    button{padding:10px 14px;border:1px solid #222;border-radius:8px;background:#fff;cursor:pointer}
+    button.primary{background:#111;color:#fff;border-color:#111}
+    .muted{color:#555;font-size:13px}
+    .preview{background:#fafafa;border:1px dashed #ccc;border-radius:10px;padding:12px;overflow:auto}
+    .code{white-space:pre-wrap;background:#111;color:#eaeaea;border-radius:10px;padding:12px;max-height:300px;overflow:auto;font-family:monospace;font-size:12px}
+    .hr{height:1px;background:#eee;margin:16px 0}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>EVREC – Email Signature Generator (Outlook-Safe)</h1>
+    <p class="desc">Completează <b>Prenume</b>, <b>Nume</b>, <b>Funcție</b> și (opțional) <b>Telefon</b>. Apasă <b>Generate</b>. Email-ul se generează automat: inițială prenume + nume @evrec.ca.</p>
+
+    <div class="grid">
+      <div class="card">
+        <label for="firstName">Prenume</label>
+        <input id="firstName" type="text" placeholder="Ex: Oana">
+
+        <label for="lastName">Nume</label>
+        <input id="lastName" type="text" placeholder="Ex: Grădinariu">
+
+        <label for="jobTitle">Funcție</label>
+        <input id="jobTitle" type="text" placeholder="Ex: Legal Counsel">
+
+        <label for="phone">Telefon (opțional)</label>
+        <input id="phone" type="text" placeholder="Ex: +40 721 000 000">
+
+        <div class="hr"></div>
+        <div class="muted">Email generat: <span id="emailPreview" style="font-weight:700">—</span></div>
+
+        <div class="row">
+          <button class="primary" id="generateBtn">Generate</button>
+          <button id="copyBtn">Copy HTML</button>
+          <button id="openBtn">Open as HTML</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="muted">Preview</div>
+        <div id="preview" class="preview">(apare după Generate)</div>
+        <div class="hr"></div>
+        <div class="muted">HTML code</div>
+        <div id="code" class="code">&lt;!-- codul apare după Generate --&gt;</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const ASSETS = {
+      logo: "https://evrec.ca/wp-content/uploads/2025/05/cropped-evrec-logo-colored-wheel-e1746716862677.jpg",
+      fbUrl: "https://facebook.com",
+      liUrl: "https://www.linkedin.com/company/exploits-valley-renewable-energy-corporation/posts/?feedView=all",
+      fbIcon: "https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png",
+      liIcon: "https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png",
+      website: "https://www.evrec.ca"
+    };
+
+    function normalize(s){
+      return (s||"").normalize("NFD").replace(/\p{Diacritic}/gu,"").replace(/[^a-zA-Z0-9]/g,"").toLowerCase();
+    }
+    function buildEmail(fn, ln){
+      const f=normalize(fn), l=normalize(ln);
+      return f&&l ? f[0]+l+"@evrec.ca" : "";
+    }
+    function buildSig(data){
+      return `<table cellpadding="0" cellspacing="0" border="0" style="font-family:Arial, Helvetica, sans-serif; font-size:14px; color:#000000; line-height:1.4; max-width:600px;">
         <tr>
-          <td style="padding-right:8px;">
-            <a href="https://facebook.com" target="_blank" style="text-decoration:none;">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png" alt="Facebook" style="display:block; width:20px; height:20px; border:0;">
-            </a>
+          <td valign="top" style="padding:10px 16px 10px 0; white-space:nowrap;">
+            <a href="${ASSETS.website}" target="_blank"><img src="${ASSETS.logo}" alt="EVREC" style="display:block; height:64px; border:0;"></a>
+            <div style="font-size:8px; line-height:8px;">&nbsp;</div>
+            <span style="font-size:13px;">Connect with<br>us:</span>
+            <table cellpadding="0" cellspacing="0"><tr>
+              <td style="padding-right:8px;"><a href="${ASSETS.fbUrl}" target="_blank"><img src="${ASSETS.fbIcon}" alt="Facebook" style="display:block;width:20px;height:20px;border:0;"></a></td>
+              <td><a href="${ASSETS.liUrl}" target="_blank"><img src="${ASSETS.liIcon}" alt="LinkedIn" style="display:block;width:20px;height:20px;border:0;"></a></td>
+            </tr></table>
           </td>
-          <td>
-            <a href="https://www.linkedin.com/company/exploits-valley-renewable-energy-corporation/posts/?feedView=all" target="_blank" style="text-decoration:none;">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" alt="LinkedIn" style="display:block; width:20px; height:20px; border:0;">
-            </a>
+          <td valign="top" style="padding:10px 0;">
+            <div style="font-weight:bold;font-size:18px;">${data.fullName}</div>
+            <div style="font-size:14px;margin:0 0 10px 0;">${data.title}</div>
+            <table cellpadding="0" cellspacing="0" border="0" style="font-size:14px;">
+              ${data.phone?`<tr><td style="font-weight:bold;padding-right:6px;">T:</td><td><a href="tel:${data.phone}" style="color:#000;text-decoration:none;">${data.phone}</a></td></tr>`:""}
+              <tr><td style="font-weight:bold;padding-right:6px;">E:</td><td><a href="mailto:${data.email}" style="color:#0b65c2;text-decoration:underline;">${data.email}</a></td></tr>
+              <tr><td style="font-weight:bold;padding-right:6px;">W:</td><td><a href="${ASSETS.website}" style="color:#0b65c2;text-decoration:underline;">${ASSETS.website.replace(/^https?:\/\//,"")}</a></td></tr>
+            </table>
           </td>
         </tr>
       </table>
-    </td>
-
-    <!-- Coloana dreapta (date utilizator) -->
-    <td valign="top" style="padding:10px 0 10px 0;">
-      <!-- Nume -->
-      <div style="font-weight:bold; font-size:18px; margin:0 0 2px 0;">Nume Prenume</div>
-      <!-- Funcție -->
-      <div style="font-size:14px; margin:0 0 10px 0;">Funcție</div>
-
-      <!-- Date de contact -->
-      <table cellpadding="0" cellspacing="0" border="0" style="font-size:14px; color:#000000;">
-        <tr>
-          <td style="font-weight:bold; padding-right:6px;">T:</td>
-          <td><a href="tel:+40721000000" style="color:#000000; text-decoration:none;">+40 721 000 000</a></td>
-        </tr>
-        <tr>
-          <td style="font-weight:bold; padding-right:6px;">E:</td>
-          <td><a href="mailto:ogradinariu@evrec.ca" style="color:#0b65c2; text-decoration:underline;">ogradinariu@evrec.ca</a></td>
-        </tr>
-        <tr>
-          <td style="font-weight:bold; padding-right:6px;">W:</td>
-          <td><a href="https://www.evrec.ca" style="color:#0b65c2; text-decoration:underline;">www.evrec.ca</a></td>
-        </tr>
-      </table>
-    </td>
-  </tr>
-</table>
-
-<!-- Linie separator -->
-<div style="font-size:8px; line-height:8px;">&nbsp;</div>
-<table cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:600px;">
-  <tr><td style="border-top:1px solid #e5e5e5; font-size:1px; line-height:1px;">&nbsp;</td></tr>
-</table>
+      <table cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:600px;">
+        <tr><td style="border-top:1px solid #e5e5e5;font-size:1px;line-height:1px;">&nbsp;</td></tr>
+      </table>`;
+    }
+    function gen(){
+      const fn=document.getElementById("firstName").value.trim();
+      const ln=document.getElementById("lastName").value.trim();
+      const jt=document.getElementById("jobTitle").value.trim();
+      const ph=document.getElementById("phone").value.trim();
+      const em=buildEmail(fn,ln);
+      if(!fn||!ln){alert("Completează prenume și nume");return;}
+      const html=buildSig({fullName:fn+" "+ln,title:jt,phone:ph,email:em});
+      document.getElementById("preview").innerHTML=html;
+      document.getElementById("code").textContent=html;
+      document.getElementById("emailPreview").textContent=em;
+      window._lastHtml=html;
+    }
+    document.getElementById("generateBtn").onclick=gen;
+    document.getElementById("copyBtn").onclick=function(){
+      if(!window._lastHtml) gen();
+      navigator.clipboard.writeText(window._lastHtml);
+      alert("Cod HTML copiat. În Outlook → Signatures → New → Paste.");
+    }
+    document.getElementById("openBtn").onclick=function(){
+      if(!window._lastHtml) gen();
+      const url="data:text/html;charset=utf-8,"+encodeURIComponent(window._lastHtml);
+      window.open(url,"_blank");
+    }
+  </script>
+</body>
+</html>
