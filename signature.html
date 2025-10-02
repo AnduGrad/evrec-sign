@@ -18,14 +18,13 @@
     button.primary{background:#111;color:#fff;border-color:#111}
     .muted{color:#555;font-size:13px}
     .preview{background:#fafafa;border:1px dashed #ccc;border-radius:10px;padding:12px;overflow:auto}
-    .code{white-space:pre-wrap;background:#111;color:#eaeaea;border-radius:10px;padding:12px;max-height:300px;overflow:auto;font-family:monospace;font-size:12px}
     .hr{height:1px;background:#eee;margin:16px 0}
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>EVREC – Email Signature Generator</h1>
-    <p class="desc">Fill in <b>Surname</b>, <b>Name</b>, <b>Job Title</b>, and (optional) <b>Mobile phone</b>. Press <b>Generate</b>. The email will be generated automatically: initial from surname + name @evrec.ca.</p>
+    <p class="desc">Fill in <b>Surname</b>, <b>Name</b>, <b>Job Title</b>, and (optional) <b>Mobile phone</b>. Press <b>Generate</b>. The email is created automatically as: first initial from surname + last name @evrec.ca.</p>
 
     <div class="grid">
       <div class="card">
@@ -38,7 +37,7 @@
         <label for="jobTitle">Job Title</label>
         <input id="jobTitle" type="text" placeholder="Ex: IT Manager">
 
-        <label for="phone">Mobile phone</label>
+        <label for="phone">Mobile phone (optional)</label>
         <input id="phone" type="text" placeholder="Ex: +40 721 000 000">
 
         <div class="hr"></div>
@@ -74,61 +73,87 @@
       const f=normalize(fn), l=normalize(ln);
       return f&&l ? f[0]+l+"@evrec.ca" : "";
     }
-    function buildSig(data){
-      return `<table cellpadding="0" cellspacing="0" border="0" style="font-family:Arial, Helvetica, sans-serif; font-size:14px; color:#000000; line-height:1.4; max-width:650px;">
-        <tr>
-         <td valign="top" style="padding:10px 10px 10px 0; white-space:nowrap;">
-  <a href="${ASSETS.website}" target="_blank">
-    <img src="${ASSETS.logo}" alt="EVREC" height="64" style="display:block;border:0;">
-  </a>
-  <span style="display:block;font-size:13px;margin-top:6px;">Connect with us:</span>
-  <table cellpadding="0" cellspacing="0" style="margin-top:4px;"><tr>
-    <td style="padding-right:8px;">
-      <a href="${ASSETS.fbUrl}" target="_blank">
-        <img src="${ASSETS.fbIcon}" alt="Facebook" width="20" height="20" style="display:block;border:0;">
-      </a>
-    </td>
-    <td>
-      <a href="${ASSETS.liUrl}" target="_blank">
-        <img src="${ASSETS.liIcon}" alt="LinkedIn" width="20" height="20" style="display:block;border:0;">
-      </a>
-    </td>
-  </tr></table>
-</td>
 
-          <td valign="top" style="padding:10px 0;">
-            <div style="font-weight:bold;font-size:18px;">${data.fullName}</div>
-            <div style="font-size:14px;margin:0 0 10px 0;">${data.title}</div>
-            <table cellpadding="0" cellspacing="0" border="0" style="font-size:14px;">
-              ${data.phone?`<tr><td style="font-weight:bold;padding-right:6px;">T:</td><td><a href="tel:${data.phone}" style="color:#000;text-decoration:none;">${data.phone}</a></td></tr>`:""}
-              <tr><td style="font-weight:bold;padding-right:6px;">E:</td><td><a href="mailto:${data.email}" style="color:#0b65c2;text-decoration:underline;">${data.email}</a></td></tr>
-              <tr><td style="font-weight:bold;padding-right:6px;">W:</td><td><a href="${ASSETS.website}" style="color:#0b65c2;text-decoration:underline;">${ASSETS.website.replace(/^https?:\/\//,"")}</a></td></tr>
-            </table>
-          </td>
-        </tr>
-      </table>
-      <table cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:600px;">
-        <tr><td style="border-top:1px solid #e5e5e5;font-size:1px;line-height:1px;">&nbsp;</td></tr>
-      </table>`;
+    // OUTLOOK-SAFE signature using only tables + inline CSS, no div/spans for spacing
+    function buildSig(data){
+      return (
+'<!-- EVREC signature -->' +
+'<table cellpadding="0" cellspacing="0" border="0" style="font-family:Arial, Helvetica, sans-serif; font-size:14px; color:#000000; line-height:1.4; max-width:650px;">' +
+'  <tr>' +
+
+'    <!-- LEFT COLUMN: logo + label + icons, stacked with an inner table -->' +
+'    <td valign="top" style="padding:10px 12px 10px 0;">' +
+'      <table cellpadding="0" cellspacing="0" border="0">' +
+'        <tr>' +
+'          <td>' +
+'            <a href="' + ASSETS.website + '" target="_blank" style="text-decoration:none;"><img src="' + ASSETS.logo + '" alt="EVREC" height="64" style="display:block;border:0;"></a>' +
+'          </td>' +
+'        </tr>' +
+'        <tr><td style="font-size:6px; line-height:6px;">&nbsp;</td></tr>' +
+'        <tr>' +
+'          <td style="font-size:13px; color:#000000;">Connect with us:</td>' +
+'        </tr>' +
+'        <tr><td style="font-size:4px; line-height:4px;">&nbsp;</td></tr>' +
+'        <tr>' +
+'          <td>' +
+'            <table cellpadding="0" cellspacing="0" border="0">' +
+'              <tr>' +
+'                <td style="padding-right:8px;"><a href="' + ASSETS.fbUrl + '" target="_blank" style="text-decoration:none;"><img src="' + ASSETS.fbIcon + '" alt="Facebook" width="20" height="20" style="display:block;border:0;"></a></td>' +
+'                <td><a href="' + ASSETS.liUrl + '" target="_blank" style="text-decoration:none;"><img src="' + ASSETS.liIcon + '" alt="LinkedIn" width="20" height="20" style="display:block;border:0;"></a></td>' +
+'              </tr>' +
+'            </table>' +
+'          </td>' +
+'        </tr>' +
+'      </table>' +
+'    </td>' +
+
+'    <!-- RIGHT COLUMN: name/title/contacts -->' +
+'    <td valign="top" style="padding:10px 0 10px 0;">' +
+'      <table cellpadding="0" cellspacing="0" border="0" style="font-size:14px; color:#000000;">' +
+'        <tr><td style="font-weight:bold; font-size:18px; padding:0; margin:0;">' + data.fullName + '</td></tr>' +
+'        <tr><td style="font-size:14px; padding:0 0 10px 0;">' + data.title + '</td></tr>' +
+         (data.phone
+           ? '<tr><td>' +
+             '<table cellpadding="0" cellspacing="0" border="0" style="font-size:14px; color:#000000;"><tr>' +
+             '<td style="font-weight:bold; padding-right:6px;">T:</td>' +
+             '<td><a href="tel:' + data.phone + '" style="color:#000000; text-decoration:none;">' + data.phone + '</a></td>' +
+             '</tr></table>' +
+             '</td></tr>'
+           : ''
+         ) +
+'        <tr><td>' +
+'          <table cellpadding="0" cellspacing="0" border="0" style="font-size:14px; color:#000000;">' +
+'            <tr><td style="font-weight:bold; padding-right:6px;">E:</td><td><a href="mailto:' + data.email + '" style="color:#0b65c2; text-decoration:underline;">' + data.email + '</a></td></tr>' +
+'            <tr><td style="font-weight:bold; padding-right:6px;">W:</td><td><a href="' + ASSETS.website + '" style="color:#0b65c2; text-decoration:underline;">' + ASSETS.website.replace(/^https?:\\/\\//,"") + '</a></td></tr>' +
+'          </table>' +
+'        </td></tr>' +
+'      </table>' +
+'    </td>' +
+
+'  </tr>' +
+'</table>' +
+'<table cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:650px;"><tr><td style="border-top:1px solid #e5e5e5; font-size:1px; line-height:1px;">&nbsp;</td></tr></table>'
+      );
     }
+
     function gen(){
       const fn=document.getElementById("firstName").value.trim();
       const ln=document.getElementById("lastName").value.trim();
       const jt=document.getElementById("jobTitle").value.trim();
       const ph=document.getElementById("phone").value.trim();
-      const em=buildEmail(fn,ln);
+      const em=(function buildEmail(fn,ln){
+        const f=normalize(fn), l=normalize(ln);
+        return f&&l ? f[0]+l+"@evrec.ca" : "";
+      })(fn,ln);
+
       if(!fn||!ln){alert("Please fill surname and name");return;}
       const html=buildSig({fullName:fn+" "+ln,title:jt,phone:ph,email:em});
       document.getElementById("preview").innerHTML=html;
       document.getElementById("emailPreview").textContent=em;
       window._lastHtml=html;
     }
+
     document.getElementById("generateBtn").onclick=gen;
   </script>
 </body>
 </html>
-
-
-
-
-
