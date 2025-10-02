@@ -24,14 +24,14 @@
 <body>
   <div class="wrap">
     <h1>EVREC – Email Signature Generator</h1>
-    <p class="desc">Fill in <b>Surname</b>, <b>Name</b>, <b>Job Title</b>, and (optional) <b>Mobile phone</b>. Press <b>Generate</b>. The email is created automatically as: first initial from surname + last name @evrec.ca.</p>
+    <p class="desc">Fill in <b>First name</b>, <b>Last Name</b>, <b>Job Title</b>, and (optional) <b>Mobile phone</b>. Press <b>Generate</b>. The email is created automatically as: first initial from surname + last name @evrec.ca.</p>
 
     <div class="grid">
       <div class="card">
-        <label for="firstName">Surname</label>
+        <label for="firstName">First name</label>
         <input id="firstName" type="text" placeholder="Ex: Andrei">
 
-        <label for="lastName">Name</label>
+        <label for="lastName">Last Name</label>
         <input id="lastName" type="text" placeholder="Ex: Grădinariu">
 
         <label for="jobTitle">Job Title</label>
@@ -74,11 +74,11 @@
         .replace(/[^a-zA-Z0-9]/g,"")
         .toLowerCase();
     }
-    function buildEmail(fn, ln){
-      const f=normalize(fn), l=normalize(ln);
-      return f&&l ? f[0]+l+"@evrec.ca" : "";
+      function buildEmail(fn, ln){
+      const f = normalize(fn);
+      const l = normalize(ln);
+      return f && l ? f + "." + l + "@evrec.ca" : "";
     }
-
     // Outlook-safe: tables only, inline CSS; left column stacked via inner table
     function buildSig(data){
       return `
@@ -174,3 +174,4 @@
   </script>
 </body>
 </html>
+
