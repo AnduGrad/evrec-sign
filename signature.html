@@ -66,74 +66,89 @@
       website: "https://www.evrec.ca"
     };
 
+    // SAFE accent stripping for all browsers/iframes (no \p{Diacritic})
     function normalize(s){
-      return (s||"").normalize("NFD").replace(/\p{Diacritic}/gu,"").replace(/[^a-zA-Z0-9]/g,"").toLowerCase();
+      return (s||"")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g,"")   // remove combining diacritics
+        .replace(/[^a-zA-Z0-9]/g,"")
+        .toLowerCase();
     }
     function buildEmail(fn, ln){
       const f=normalize(fn), l=normalize(ln);
       return f&&l ? f[0]+l+"@evrec.ca" : "";
     }
 
-    // OUTLOOK-SAFE signature using only tables + inline CSS, no div/spans for spacing
+    // Outlook-safe: tables only, inline CSS; left column stacked via inner table
     function buildSig(data){
-      return (
-'<!-- EVREC signature -->' +
-'<table cellpadding="0" cellspacing="0" border="0" style="font-family:Arial, Helvetica, sans-serif; font-size:14px; color:#000000; line-height:1.4; max-width:650px;">' +
-'  <tr>' +
+      return `
+<table cellpadding="0" cellspacing="0" border="0" style="font-family:Arial, Helvetica, sans-serif; font-size:14px; color:#000000; line-height:1.4; max-width:650px;">
+  <tr>
 
-'    <!-- LEFT COLUMN: logo + label + icons, stacked with an inner table -->' +
-'    <td valign="top" style="padding:10px 12px 10px 0;">' +
-'      <table cellpadding="0" cellspacing="0" border="0">' +
-'        <tr>' +
-'          <td>' +
-'            <a href="' + ASSETS.website + '" target="_blank" style="text-decoration:none;"><img src="' + ASSETS.logo + '" alt="EVREC" height="64" style="display:block;border:0;"></a>' +
-'          </td>' +
-'        </tr>' +
-'        <tr><td style="font-size:6px; line-height:6px;">&nbsp;</td></tr>' +
-'        <tr>' +
-'          <td style="font-size:13px; color:#000000;">Connect with us:</td>' +
-'        </tr>' +
-'        <tr><td style="font-size:4px; line-height:4px;">&nbsp;</td></tr>' +
-'        <tr>' +
-'          <td>' +
-'            <table cellpadding="0" cellspacing="0" border="0">' +
-'              <tr>' +
-'                <td style="padding-right:8px;"><a href="' + ASSETS.fbUrl + '" target="_blank" style="text-decoration:none;"><img src="' + ASSETS.fbIcon + '" alt="Facebook" width="20" height="20" style="display:block;border:0;"></a></td>' +
-'                <td><a href="' + ASSETS.liUrl + '" target="_blank" style="text-decoration:none;"><img src="' + ASSETS.liIcon + '" alt="LinkedIn" width="20" height="20" style="display:block;border:0;"></a></td>' +
-'              </tr>' +
-'            </table>' +
-'          </td>' +
-'        </tr>' +
-'      </table>' +
-'    </td>' +
+    <!-- LEFT COLUMN -->
+    <td valign="top" style="padding:10px 12px 10px 0;">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td>
+            <a href="${ASSETS.website}" target="_blank" style="text-decoration:none;">
+              <img src="${ASSETS.logo}" alt="EVREC" height="64" style="display:block;border:0;">
+            </a>
+          </td>
+        </tr>
+        <tr><td style="font-size:6px; line-height:6px;">&nbsp;</td></tr>
+        <tr>
+          <td style="font-size:13px; color:#000000;">Connect with us:</td>
+        </tr>
+        <tr><td style="font-size:4px; line-height:4px;">&nbsp;</td></tr>
+        <tr>
+          <td>
+            <table cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td style="padding-right:8px;">
+                  <a href="${ASSETS.fbUrl}" target="_blank" style="text-decoration:none;">
+                    <img src="${ASSETS.fbIcon}" alt="Facebook" width="20" height="20" style="display:block;border:0;">
+                  </a>
+                </td>
+                <td>
+                  <a href="${ASSETS.liUrl}" target="_blank" style="text-decoration:none;">
+                    <img src="${ASSETS.liIcon}" alt="LinkedIn" width="20" height="20" style="display:block;border:0;">
+                  </a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </td>
 
-'    <!-- RIGHT COLUMN: name/title/contacts -->' +
-'    <td valign="top" style="padding:10px 0 10px 0;">' +
-'      <table cellpadding="0" cellspacing="0" border="0" style="font-size:14px; color:#000000;">' +
-'        <tr><td style="font-weight:bold; font-size:18px; padding:0; margin:0;">' + data.fullName + '</td></tr>' +
-'        <tr><td style="font-size:14px; padding:0 0 10px 0;">' + data.title + '</td></tr>' +
-         (data.phone
-           ? '<tr><td>' +
-             '<table cellpadding="0" cellspacing="0" border="0" style="font-size:14px; color:#000000;"><tr>' +
-             '<td style="font-weight:bold; padding-right:6px;">T:</td>' +
-             '<td><a href="tel:' + data.phone + '" style="color:#000000; text-decoration:none;">' + data.phone + '</a></td>' +
-             '</tr></table>' +
-             '</td></tr>'
-           : ''
-         ) +
-'        <tr><td>' +
-'          <table cellpadding="0" cellspacing="0" border="0" style="font-size:14px; color:#000000;">' +
-'            <tr><td style="font-weight:bold; padding-right:6px;">E:</td><td><a href="mailto:' + data.email + '" style="color:#0b65c2; text-decoration:underline;">' + data.email + '</a></td></tr>' +
-'            <tr><td style="font-weight:bold; padding-right:6px;">W:</td><td><a href="' + ASSETS.website + '" style="color:#0b65c2; text-decoration:underline;">' + ASSETS.website.replace(/^https?:\\/\\//,"") + '</a></td></tr>' +
-'          </table>' +
-'        </td></tr>' +
-'      </table>' +
-'    </td>' +
+    <!-- RIGHT COLUMN -->
+    <td valign="top" style="padding:10px 0 10px 0;">
+      <table cellpadding="0" cellspacing="0" border="0" style="font-size:14px; color:#000000;">
+        <tr><td style="font-weight:bold; font-size:18px; padding:0; margin:0;">${data.fullName}</td></tr>
+        <tr><td style="font-size:14px; padding:0 0 10px 0;">${data.title}</td></tr>
+        ${data.phone ? `
+        <tr><td>
+          <table cellpadding="0" cellspacing="0" border="0" style="font-size:14px; color:#000000;">
+            <tr>
+              <td style="font-weight:bold; padding-right:6px;">T:</td>
+              <td><a href="tel:${data.phone}" style="color:#000000; text-decoration:none;">${data.phone}</a></td>
+            </tr>
+          </table>
+        </td></tr>` : ``}
+        <tr><td>
+          <table cellpadding="0" cellspacing="0" border="0" style="font-size:14px; color:#000000;">
+            <tr><td style="font-weight:bold; padding-right:6px;">E:</td><td><a href="mailto:${data.email}" style="color:#0b65c2; text-decoration:underline;">${data.email}</a></td></tr>
+            <tr><td style="font-weight:bold; padding-right:6px;">W:</td><td><a href="${ASSETS.website}" style="color:#0b65c2; text-decoration:underline;">${ASSETS.website.replace(/^https?:\/\//,"")}</a></td></tr>
+          </table>
+        </td></tr>
+      </table>
+    </td>
 
-'  </tr>' +
-'</table>' +
-'<table cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:650px;"><tr><td style="border-top:1px solid #e5e5e5; font-size:1px; line-height:1px;">&nbsp;</td></tr></table>'
-      );
+  </tr>
+</table>
+<table cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:650px;">
+  <tr><td style="border-top:1px solid #e5e5e5; font-size:1px; line-height:1px;">&nbsp;</td></tr>
+</table>`;
     }
 
     function gen(){
@@ -141,19 +156,21 @@
       const ln=document.getElementById("lastName").value.trim();
       const jt=document.getElementById("jobTitle").value.trim();
       const ph=document.getElementById("phone").value.trim();
-      const em=(function buildEmail(fn,ln){
-        const f=normalize(fn), l=normalize(ln);
-        return f&&l ? f[0]+l+"@evrec.ca" : "";
-      })(fn,ln);
+      const em=buildEmail(fn,ln);
 
-      if(!fn||!ln){alert("Please fill surname and name");return;}
+      if(!fn||!ln){ alert("Please fill surname and name"); return; }
+
       const html=buildSig({fullName:fn+" "+ln,title:jt,phone:ph,email:em});
       document.getElementById("preview").innerHTML=html;
       document.getElementById("emailPreview").textContent=em;
       window._lastHtml=html;
     }
 
-    document.getElementById("generateBtn").onclick=gen;
+    // Bind after DOM is ready (robust in iframes)
+    document.addEventListener('DOMContentLoaded', function(){
+      const btn=document.getElementById("generateBtn");
+      if(btn) btn.addEventListener('click', gen);
+    });
   </script>
 </body>
 </html>
